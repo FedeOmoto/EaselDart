@@ -1,0 +1,9 @@
+name: easel_dart
+version: 0.1.0
+author: Federico Omoto <federico.omoto@gmail.com>
+description: A port of the EaselJS library to Dart.
+environment:
+  sdk: '>=1.3.3'
+dependencies:
+  browser: '>=0.10.0 <=0.11.0'
+  create_dart: '>=0.1.0 <0.2.0'
