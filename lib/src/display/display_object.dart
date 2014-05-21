@@ -22,7 +22,7 @@ part of easel_dart;
  * all display objects, such as transformation properties (x, y, scaleX, scaleY,
  * etc), caching, and mouse handlers.
  */
-abstract class DisplayObject extends EventDispatcher {
+abstract class DisplayObject extends create_dart.EventDispatcher {
   // Listing of mouse event names. Used in _hasMouseEventListener.
   static const List<String> _MOUSE_EVENTS = const <String>['click', 'dblclick',
       'mousedown', 'mouseout', 'mouseover', 'pressmove', 'pressup', 'rollout',
@@ -211,7 +211,7 @@ abstract class DisplayObject extends EventDispatcher {
   double _cacheScale = 1.0;
   int _cacheDataURLID = 0;
   String _cacheDataURL;
-  Matrix2D<double> _matrix;
+  Matrix2D _matrix;
   Rectangle<double> _rectangle;
   Rectangle<double> _bounds;
 
@@ -235,7 +235,7 @@ abstract class DisplayObject extends EventDispatcher {
 
   DisplayObject() {
     _id = UID.get;
-    _matrix = new Matrix2D<double>();
+    _matrix = new Matrix2D();
     _rectangle = new Rectangle<double>(0.0, 0.0, 0.0, 0.0);
   }
 
@@ -269,7 +269,7 @@ abstract class DisplayObject extends EventDispatcher {
 
     Rectangle<double> fBounds;
 
-    if ((fBounds = _applyFilterBounds(offX, offY, 0.0, 0.0)) != null) {
+    if ((fBounds = _applyFilterBounds(offX, offY, 0, 0)) != null) {
       offX = fBounds.left;
       offY = fBounds.top;
     }
@@ -286,7 +286,7 @@ abstract class DisplayObject extends EventDispatcher {
    * context. This is typically called prior to [draw].
    */
   void updateContext(CanvasRenderingContext2D ctx) {
-    Matrix2D<double> mtx;
+    Matrix2D mtx;
 
     if (mask != null && mask.graphics != null && !mask.graphics.isEmpty) {
       mtx = mask.getMatrix(mask._matrix);
@@ -480,7 +480,7 @@ abstract class DisplayObject extends EventDispatcher {
    *      // Results in x=400, y=300
    */
   Point<double> localToGlobal(double x, double y) {
-    Matrix2D<double> mtx = getConcatenatedMatrix(_matrix);
+    Matrix2D mtx = getConcatenatedMatrix(_matrix);
 
     if (mtx == null) return null;
     mtx.append(1.0, 0.0, 0.0, 1.0, x, y);
@@ -503,8 +503,8 @@ abstract class DisplayObject extends EventDispatcher {
    *      var point = myDisplayObject.globalToLocal(100, 100);
    *      // Results in x=-200, y=-100
    */
-  Point globalToLocal(double x, double y) {
-    Matrix2D<double> mtx = getConcatenatedMatrix(_matrix);
+  Point<double> globalToLocal(double x, double y) {
+    Matrix2D mtx = getConcatenatedMatrix(_matrix);
 
     if (mtx == null) return null;
 
@@ -524,7 +524,7 @@ abstract class DisplayObject extends EventDispatcher {
    *      var pt = this.localToGlobal(x, y);
    *      pt = target.globalToLocal(pt.x, pt.y);
    */
-  Point localToLocal(double x, double y, DisplayObject target) {
+  Point<double> localToLocal(double x, double y, DisplayObject target) {
     Point point = localToGlobal(x, y);
     return target.globalToLocal(point.x, point.y);
   }
@@ -555,11 +555,11 @@ abstract class DisplayObject extends EventDispatcher {
   }
 
   /// Returns a matrix based on this object's transform.
-  Matrix2D<double> getMatrix([Matrix2D<double> matrix]) {
+  Matrix2D getMatrix([Matrix2D matrix]) {
     if (matrix != null) {
       matrix.identity();
     } else {
-      matrix = new Matrix2D<double>();
+      matrix = new Matrix2D();
     }
 
     return matrix
@@ -575,11 +575,11 @@ abstract class DisplayObject extends EventDispatcher {
    * positions between coordinate spaces, such as with [localToGlobal] and
    * [globalToLocal].
    */
-  Matrix2D<double> getConcatenatedMatrix([Matrix2D<double> matrix]) {
+  Matrix2D getConcatenatedMatrix([Matrix2D matrix]) {
     if (matrix != null) {
       matrix.identity();
     } else {
-      matrix = new Matrix2D<double>();
+      matrix = new Matrix2D();
     }
 
     DisplayObject object = this;
@@ -633,8 +633,13 @@ abstract class DisplayObject extends EventDispatcher {
    *      var shape = stage.addChild(new Shape())
    *          .set({graphics:myGraphics, x:100, y:100, alpha:0.5});
    */
-  DisplayObject set() {
-    // TODO
+  DisplayObject set(Map<Symbol, Object> props) {
+    InstanceMirror im = reflect(this);
+
+    props.forEach((Symbol fieldName, Object value) {
+      im.setField(fieldName, value);
+    });
+
     return this;
   }
 
@@ -750,12 +755,176 @@ abstract class DisplayObject extends EventDispatcher {
    * this instance's current context are reverted to their defaults (for example
    * .parent). Also note that caches are not maintained across clones.
    */
-  DisplayObject clone() {
+  DisplayObject clone([bool recursive = false]) {
     ClassMirror cm = reflectClass(runtimeType);
     InstanceMirror im = cm.newInstance(const Symbol(''), []);
     DisplayObject object = im.reflectee;
-    //cloneProps(object);
+    _cloneProps(object);
 
     return object;
+  }
+
+  /// Returns a string representation of this object.
+  @override
+  String toString() => '[${runtimeType} (name=$name)]';
+
+  // separated so it can be used more easily in subclasses:
+  void _cloneProps(DisplayObject object) {
+    object.alpha = alpha;
+    object.name = name;
+    object.regX = regX;
+    object.regY = regY;
+    object.rotation = rotation;
+    object.scaleX = scaleX;
+    object.scaleY = scaleY;
+    object.shadow = shadow;
+    object.skewX = skewX;
+    object.skewY = skewY;
+    object.visible = visible;
+    object.x = x;
+    object.y = y;
+    object._bounds = _bounds;
+    object.mouseEnabled = mouseEnabled;
+    object.compositeOperation = compositeOperation;
+  }
+
+  void _applyShadow(CanvasRenderingContext2D ctx, Shadow shadow) {
+    shadow = shadow != null ? shadow : Shadow.identity;
+    ctx.shadowColor = shadow.color;
+    ctx.shadowOffsetX = shadow.offsetX;
+    ctx.shadowOffsetY = shadow.offsetY;
+    ctx.shadowBlur = shadow.blur;
+  }
+
+  void _tick(Map<Symbol, Object> props) {
+    if (hasEventListener('tick')) {
+      TickEvent event = new TickEvent().set(props);
+      dispatchEvent(event);
+    }
+  }
+
+  bool _testHit(CanvasRenderingContext2D ctx) {
+    bool hit;
+
+    try {
+      hit = ctx.getImageData(0, 0, 1, 1).data[3] > 1;
+    } catch (e) {
+      if (!DisplayObject.suppressCrossDomainErrors) {
+        throw new StateError('An error has occurred. This is most likely due to'
+            ' security restrictions on reading canvas pixel data with local or'
+            ' cross-domain images.');
+      }
+    }
+
+    return hit;
+  }
+
+  void _applyFilters() {
+    if (filters == null || filters.length == 0 || _cacheCanvas == null) return;
+
+    CanvasRenderingContext2D ctx = _cacheCanvas.context2D;
+    int w = _cacheCanvas.width;
+    int h = _cacheCanvas.height;
+
+    filters.forEach((Filter filter) => filter.applyFilter(ctx, 0.0, 0.0, w, h));
+  }
+
+  Rectangle<double> _applyFilterBounds(double x, double y, int width, int
+      height) {
+    if (filters == null || filters.length == 0) return null;
+
+    filters.where((Filter filter) => filter.getBounds != null).forEach((Filter
+        filter) {
+      Rectangle<double> fBounds = filter.getBounds;
+      x += fBounds.left;
+      y += fBounds.top;
+      width += fBounds.width.toInt();
+      height += fBounds.height.toInt();
+    });
+
+    return _rectangle = new Rectangle<double>(x, y, width.toDouble(),
+        height.toDouble());
+  }
+
+  Rectangle<double> _getBounds([Matrix2D matrix, bool ignoreTransform]) {
+    return _transformBounds(getBounds, matrix, ignoreTransform);
+  }
+
+  Rectangle<double> _transformBounds(Rectangle<double> bounds, [Matrix2D
+      matrix, bool ignoreTransform]) {
+    if (bounds == null) return null;
+
+    double x = bounds.left,
+        y = bounds.top,
+        width = bounds.width,
+        height = bounds.height;
+
+    Matrix2D mtx = ignoreTransform == true ? _matrix.identity() : getMatrix(
+        _matrix);
+
+    if (x != 0.0 || y != 0.0) {
+      mtx.appendTransform(0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, -x, -y);
+    }
+
+    if (matrix != null) mtx.prependMatrix(matrix);
+
+
+    double x_a = width * mtx.a,
+        x_b = width * mtx.b,
+        y_c = height * mtx.c,
+        y_d = height * mtx.d;
+
+    double minX = mtx.tx,
+        maxX = mtx.tx,
+        minY = mtx.ty,
+        maxY = mtx.ty;
+
+    if ((x = x_a + mtx.tx) < minX) {
+      minX = x;
+    } else if (x > maxX) {
+      maxX = x;
+    }
+
+    if ((x = x_a + y_c + mtx.tx) < minX) {
+      minX = x;
+    } else if (x > maxX) {
+      maxX = x;
+    }
+
+    if ((x = y_c + mtx.tx) < minX) {
+      minX = x;
+    } else if (x > maxX) {
+      maxX = x;
+    }
+
+    if ((y = x_b + mtx.ty) < minY) {
+      minY = y;
+    } else if (y > maxY) {
+      maxY = y;
+    }
+
+    if ((y = x_b + y_d + mtx.ty) < minY) {
+      minY = y;
+    } else if (y > maxY) {
+      maxY = y;
+    }
+
+    if ((y = y_d + mtx.ty) < minY) {
+      minY = y;
+    } else if (y > maxY) {
+      maxY = y;
+    }
+
+    return new Rectangle<double>(minX, minY, maxX - minX, maxY - minY);
+  }
+
+  // Indicates whether the display object has any mouse event listeners or a
+  // cursor.
+  bool _hasMouseEventListener() {
+    DisplayObject._MOUSE_EVENTS.forEach((String event) {
+      if (hasEventListener(event)) return true;
+    });
+
+    return cursor != null;
   }
 }

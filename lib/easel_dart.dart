@@ -108,10 +108,12 @@
  */
 library easel_dart;
 
-import 'dart:html';
+import 'dart:html' hide MouseEvent;
+import 'dart:html' as html show MouseEvent;
 import 'dart:math';
 import 'dart:mirrors';
-import 'package:create_dart/create_dart.dart';
+import 'dart:async';
+import 'package:create_dart/create_dart.dart' as create_dart;
 
 part 'src/display/display_object.dart';
 part 'src/display/container.dart';
@@ -119,7 +121,12 @@ part 'src/display/shadow.dart';
 part 'src/display/shape.dart';
 part 'src/display/graphics.dart';
 part 'src/display/stage.dart';
+part 'src/display/text.dart';
+part 'src/display/bitmap.dart';
 part 'src/filters/filter.dart';
+part 'src/filters/blur_filter.dart';
 part 'src/geom/matrix_2d.dart';
 part 'src/utils/uid.dart';
+part 'src/events/mouse_event.dart';
+part 'src/events/tick_event.dart';
 part 'src/sprite_sheet.dart';

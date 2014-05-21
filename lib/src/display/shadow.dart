@@ -22,5 +22,27 @@ part of easel_dart;
  *      myImage.shadow = new createjs.Shadow("#000000", 5, 5, 10);
  */
 class Shadow {
+  /// An identity shadow object (all properties are set to 0).
+  static final Shadow identity = new Shadow('transparent', 0, 0, 0);
 
+  /// The color of the shadow.
+  String color;
+
+  /// The x offset of the shadow.
+  int offsetX;
+
+  /// The y offset of the shadow.
+  int offsetY;
+
+  /// The blur of the shadow.
+  int blur;
+
+  Shadow(this.color, this.offsetX, this.offsetY, this.blur);
+
+  /// Returns a string representation of this object.
+  @override
+  String toString() => '[${runtimeType}]';
+
+  /// Returns a clone of this Shadow instance.
+  Shadow clone() => new Shadow(color, offsetX, offsetY, blur);
 }

@@ -4,8 +4,8 @@ packages:
   browser:
     description: browser
     source: hosted
-    version: "0.10.0+1"
+    version: "0.10.0+2"
   create_dart:
     description: create_dart
     source: hosted
-    version: "0.1.0"
+    version: "0.1.3"

@@ -33,5 +33,57 @@ part of easel_dart;
  *      shape.graphics.beginFill("#ff0000").drawRect(0, 0, 100, 100);
  */
 class Shape extends DisplayObject {
+  /// The graphics instance to display.
+  Graphics graphics;
 
+  /**
+   * The graphics instance to display. If null, a new Graphics instance will be
+   * created.
+   */
+  Shape([Graphics graphics]) {
+    this.graphics = graphics == null ? new Graphics() : graphics;
+  }
+
+  /**
+   * Returns true or false indicating whether the Shape would be visible if
+   * drawn to a canvas. This does not account for whether it would be visible
+   * within the boundaries of the stage.
+   * NOTE: This method is mainly for internal use, though it may be useful for
+   * advanced uses.
+   */
+  @override
+  bool get isVisible {
+    bool hasContent = _cacheCanvas != null ? true : (graphics != null &&
+        !graphics.isEmpty);
+    return !!(visible && alpha > 0.0 && scaleX != 0.0 && scaleY != 0.0 &&
+        hasContent);
+  }
+
+  /**
+   * Draws the Shape into the specified context ignoring its visible, alpha,
+   * shadow, and transform. Returns true if the draw was handled (useful for
+   * overriding functionality).
+   *
+   * <i>NOTE: This method is mainly for internal use, though it may be useful
+   * for advanced uses.</i>
+   */
+  @override
+  bool draw(CanvasRenderingContext2D ctx, [bool ignoreCache = false]) {
+    if (super.draw(ctx, ignoreCache)) return true;
+    graphics.draw(ctx);
+    return true;
+  }
+
+  /**
+   * Returns a clone of this Shape. Some properties that are specific to this
+   * instance's current context are reverted to their defaults (for example
+   * .parent).
+   */
+  @override
+  Shape clone([bool recursive = false]) {
+    Shape shape = super.clone();
+    shape.graphics = (recursive && graphics != null) ? graphics.clone() :
+        graphics;
+    return shape;
+  }
 }

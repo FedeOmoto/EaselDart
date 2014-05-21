@@ -45,6 +45,24 @@ part of easel_dart;
  * * [ColorFilter]: Color transform a display object
  * * [ColorMatrixFilter]: Transform an image using a [ColorMatrix]
  */
-class Filter {
+abstract class Filter {
+  /**
+   * Returns a rectangle with values indicating the margins required to draw the
+   * filter or null. For example, a filter that will extend the drawing area 4
+   * pixels to the left, and 7 pixels to the right (but no pixels up or down)
+   * would return a rectangle with (x=-4, y=0, width=11, height=0).
+   */
+  Rectangle<double> get getBounds;
 
+  /// Applies the filter to the specified context.
+  bool applyFilter(CanvasRenderingContext2D ctx, double x, double y, int
+      width, int height, [CanvasRenderingContext2D targetCtx, double targetX, double
+      targetY]);
+
+  /// Returns a string representation of this object.
+  @override
+  String toString() => '[${runtimeType}]';
+
+  /// Returns a clone of this Filter instance.
+  Filter clone();
 }
