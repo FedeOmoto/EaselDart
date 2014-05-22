@@ -252,7 +252,11 @@ class Graphics {
   CanvasRenderingContext2D _ctx;
 
   static Command _beginCmd = new Command(#beginPath, []);
-  static Command _fillCmd = new Command(#fill, [], false);
+
+  // TODO: report a bug in dart2js when compiling with an empty list
+  // "Uncaught TypeError: Failed to execute 'fill' on 'CanvasRenderingContext2D': parameter 1 ('undefined') is not a valid enum value."
+  static Command _fillCmd = new Command(#fill, ['nonzero'], false);
+
   static Command _strokeCmd = new Command(#stroke, [], false);
 
   List<Command> _strokeInstructions;

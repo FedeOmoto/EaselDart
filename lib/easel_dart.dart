@@ -111,7 +111,10 @@ library easel_dart;
 import 'dart:html' hide MouseEvent;
 import 'dart:html' as html show MouseEvent;
 import 'dart:math';
+
+@MirrorsUsed(targets: const [CanvasRenderingContext2D])
 import 'dart:mirrors';
+
 import 'dart:async';
 import 'package:create_dart/create_dart.dart' as create_dart;
 
