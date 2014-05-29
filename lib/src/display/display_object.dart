@@ -921,9 +921,9 @@ abstract class DisplayObject extends create_dart.EventDispatcher {
   // Indicates whether the display object has any mouse event listeners or a
   // cursor.
   bool _hasMouseEventListener() {
-    DisplayObject._MOUSE_EVENTS.forEach((String event) {
+    for (String event in DisplayObject._MOUSE_EVENTS) {
       if (hasEventListener(event)) return true;
-    });
+    }
 
     return cursor != null;
   }

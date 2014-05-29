@@ -14,13 +14,10 @@
 
 part of easel_dart;
 
-class TickEvent extends create_dart.Event {
-  double delta;
-  bool paused;
-  double time;
-  double runTime;
-  List<Object> params;
+class AnimationEndEvent extends create_dart.Event {
+  String name;
+  dynamic next;
 
-  TickEvent([bool bubbles = false, bool cancelable = false]) : super('tick',
-      bubbles, cancelable);
+  AnimationEndEvent([bool bubbles = false, bool cancelable = false]) : super(
+      'animationend', bubbles, cancelable);
 }

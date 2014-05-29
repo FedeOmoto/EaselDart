@@ -66,14 +66,14 @@ class Stage extends Container {
    * this will indicate the most recent position over the canvas, and
    * mouseInBounds will be set to false.
    */
-  int mouseX = 0;
+  double mouseX = 0.0;
 
   /**
    * The current mouse Y position on the canvas. If the mouse leaves the canvas,
    * this will indicate the most recent position over the canvas, and
    * mouseInBounds will be set to false.
    */
-  int mouseY = 0;
+  double mouseY = 0.0;
 
   /**
    * Indicates whether display objects should be rendered on whole pixels. You
@@ -192,7 +192,7 @@ class Stage extends Container {
   Stage _nextStage;
   Stage _prevStage;
   Map<String, EventListener> _eventListeners;
-  int _mouseOverX, _mouseOverY;
+  double _mouseOverX, _mouseOverY;
   List<DisplayObject> _mouseOverTarget;
 
   Stage(this.canvas) {
@@ -278,7 +278,7 @@ class Stage extends Container {
    * object will be passed through to display object tick handlers, instead of
    * `delta` and `paused` parameters.
    */
-  void handleEvent(create_dart.Event event, [Object data]) {
+  void handleEvent(create_dart.Event event, [dynamic data]) {
     if (event is TickEvent) update(<Object>[event, data]);
   }
 
@@ -400,7 +400,7 @@ class Stage extends Container {
     return stage;
   }
 
-  Rectangle<int> _getElementRect(CanvasElement element) {
+  Rectangle<double> _getElementRect(CanvasElement element, [int a]) {
     Rectangle<double> bounds = element.getBoundingClientRect();
 
     int offX = window.scrollX - document.body.clientLeft;
@@ -416,20 +416,20 @@ class Stage extends Container {
     int padB = int.parse(styles.paddingBottom.replaceAll('px', '')) + int.parse(
         styles.borderBottomWidth.replaceAll('px', ''));
 
-    int left = bounds.left.toInt() + offX + padL;
-    int top = bounds.top.toInt() + offY + padT;
-    int right = bounds.right.toInt() + offX - padR;
-    int bottom = bounds.bottom.toInt() + offY - padB;
+    double left = bounds.left + offX + padL;
+    double top = bounds.top + offY + padT;
+    double right = bounds.right + offX - padR;
+    double bottom = bounds.bottom + offY - padB;
 
-    return new Rectangle<int>.fromPoints(new Point<int>(left, top),
-        new Point<int>(right, bottom));
+    return new Rectangle<double>.fromPoints(new Point<double>(left, top),
+        new Point<double>(right, bottom));
   }
 
   Map<String, Object> _getPointerData(int id) {
     if (_pointerData[id] == null) {
       _pointerData[id] = <String, Object> {
-        'x': 0,
-        'y': 0
+        'x': 0.0,
+        'y': 0.0
       };
 
       // if it's the first new touch, then make it the primary pointer id:
@@ -475,7 +475,7 @@ class Stage extends Container {
 
   void _updatePointerPosition(int id, html.MouseEvent event, int pageX, int
       pageY) {
-    Rectangle<int> rect = _getElementRect(canvas);
+    Rectangle<double> rect = _getElementRect(canvas);
     double x = (pageX - rect.left).toDouble();
     double y = (pageY - rect.top).toDouble();
 
@@ -485,8 +485,8 @@ class Stage extends Container {
 
     if (data['inBounds'] = (x >= 0 && y >= 0 && x <= canvas.width - 1 && y <=
         canvas.height - 1)) {
-      data['x'] = x.round();
-      data['y'] = y.round();
+      data['x'] = x;
+      data['y'] = y;
     } else if (mouseMoveOutside) {
       data['x'] = x < 0 ? 0 : (x > canvas.width - 1 ? canvas.width - 1 : x);
       data['y'] = y < 0 ? 0 : (y > canvas.height - 1 ? canvas.height - 1 : y);
@@ -556,8 +556,8 @@ class Stage extends Container {
     }
 
     if (owner == null) {
-      List<DisplayObject> list = _getObjectsUnderPoint((data['x'] as
-          int).toDouble(), (data['y'] as int).toDouble(), null, true);
+      List<DisplayObject> list = _getObjectsUnderPoint(data['x'], data['y'],
+          null, true);
       if (list != null) target = data['target'] = list.first;
       _dispatchMouseEvent(data['target'], 'mousedown', true, id, data, event);
     }
@@ -660,8 +660,8 @@ class Stage extends Container {
     Map<String, Object> data = _getPointerData(-1);
 
     if (owner == null) {
-      List<DisplayObject> list = _getObjectsUnderPoint((data['x'] as
-          int).toDouble(), (data['y'] as int).toDouble(), null, true);
+      List<DisplayObject> list = _getObjectsUnderPoint(data['x'], data['y'],
+          null, true);
       if (list != null) target = list.first;
       _dispatchMouseEvent(target, 'dblclick', true, -1, data, event);
     }

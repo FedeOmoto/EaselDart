@@ -14,13 +14,15 @@
 
 part of easel_dart;
 
-class TickEvent extends create_dart.Event {
-  double delta;
-  bool paused;
-  double time;
-  double runTime;
-  List<Object> params;
+// TODO: document this class
+class SpriteSheetData {
+  /**
+   * Specifies the framerate to use by default for Sprite instances using the
+   * SpriteSheet. See [Sprite.framerate] for more information.
+   */
+  int framerate = 0;
 
-  TickEvent([bool bubbles = false, bool cancelable = false]) : super('tick',
-      bubbles, cancelable);
+  Map<String, Object> animations;
+  Map<String, num> frames;
+  List<CanvasImageSource> images;
 }

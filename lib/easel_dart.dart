@@ -116,7 +116,9 @@ import 'dart:math';
 import 'dart:mirrors';
 
 import 'dart:async';
+
 import 'package:create_dart/create_dart.dart' as create_dart;
+export 'package:create_dart/create_dart.dart';
 
 part 'src/display/display_object.dart';
 part 'src/display/container.dart';
@@ -126,10 +128,17 @@ part 'src/display/graphics.dart';
 part 'src/display/stage.dart';
 part 'src/display/text.dart';
 part 'src/display/bitmap.dart';
+part 'src/display/sprite_sheet_data.dart';
+part 'src/display/sprite_sheet.dart';
+part 'src/display/sprite.dart';
 part 'src/filters/filter.dart';
 part 'src/filters/blur_filter.dart';
+part 'src/filters/color_filter.dart';
+part 'src/filters/color_matrix.dart';
+part 'src/filters/color_matrix_filter.dart';
 part 'src/geom/matrix_2d.dart';
 part 'src/utils/uid.dart';
+part 'src/utils/ticker.dart';
 part 'src/events/mouse_event.dart';
 part 'src/events/tick_event.dart';
-part 'src/sprite_sheet.dart';
+part 'src/events/animation_end_event.dart';
