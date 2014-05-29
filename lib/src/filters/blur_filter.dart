@@ -95,7 +95,7 @@ class BlurFilter extends Filter {
         blurY * q);
   }
 
-  //@override
+  @override
   bool applyFilter(CanvasRenderingContext2D ctx, double x, double y, int
       width, int height, [CanvasRenderingContext2D targetCtx, double targetX, double
       targetY]) {
@@ -339,5 +339,5 @@ class BlurFilter extends Filter {
 
   /// Returns a clone of this object.
   @override
-  Filter clone() => new BlurFilter(blurX, blurY, quality);
+  BlurFilter clone() => new BlurFilter(blurX, blurY, quality);
 }

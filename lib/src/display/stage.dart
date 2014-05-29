@@ -194,6 +194,7 @@ class Stage extends Container {
   Map<String, EventListener> _eventListeners;
   double _mouseOverX, _mouseOverY;
   List<DisplayObject> _mouseOverTarget;
+  Map<String, Object> _touch;
 
   Stage(this.canvas) {
     _pointerData = new Map<int, Map<String, Object>>();
@@ -381,11 +382,10 @@ class Stage extends Container {
       _eventListeners = null;
     } else if (enable && _eventListeners == null && canvas != null) {
       _eventListeners = new Map<String, EventListener>();
-      _eventListeners['mouseup'] = (html.MouseEvent e) => _handleMouseUp(e);
-      _eventListeners['mousemove'] = (html.MouseEvent e) => _handleMouseMove(e);
-      _eventListeners['dblclick'] = (html.MouseEvent e) => _handleDoubleClick(e
-          );
-      _eventListeners['mousedown'] = (html.MouseEvent e) => _handleMouseDown(e);
+      _eventListeners['mouseup'] = (UIEvent e) => _handleMouseUp(e);
+      _eventListeners['mousemove'] = (UIEvent e) => _handleMouseMove(e);
+      _eventListeners['dblclick'] = (UIEvent e) => _handleDoubleClick(e);
+      _eventListeners['mousedown'] = (UIEvent e) => _handleMouseDown(e);
 
       _eventListeners.forEach((String type, EventListener listener) {
         window.addEventListener(type, listener, false);
@@ -400,7 +400,7 @@ class Stage extends Container {
     return stage;
   }
 
-  Rectangle<double> _getElementRect(CanvasElement element, [int a]) {
+  Rectangle<double> _getElementRect(CanvasElement element) {
     Rectangle<double> bounds = element.getBoundingClientRect();
 
     int offX = window.scrollX - document.body.clientLeft;
@@ -445,12 +445,12 @@ class Stage extends Container {
     return _pointerData[id];
   }
 
-  void _handleMouseMove(html.MouseEvent event) {
+  void _handleMouseMove(UIEvent event) {
     _handlePointerMove(-1, event, event.page.x, event.page.y);
   }
 
-  void _handlePointerMove(int id, html.MouseEvent event, int pageX, int
-      pageY, [Stage owner]) {
+  void _handlePointerMove(int id, UIEvent event, int pageX, int pageY, [Stage
+      owner]) {
     if (_prevStage != null && owner == null) return; // redundant listener.
     if (canvas == null) return;
 
@@ -473,8 +473,7 @@ class Stage extends Container {
     }
   }
 
-  void _updatePointerPosition(int id, html.MouseEvent event, int pageX, int
-      pageY) {
+  void _updatePointerPosition(int id, UIEvent event, int pageX, int pageY) {
     Rectangle<double> rect = _getElementRect(canvas);
     double x = (pageX - rect.left).toDouble();
     double y = (pageY - rect.top).toDouble();
@@ -503,12 +502,11 @@ class Stage extends Container {
     }
   }
 
-  void _handleMouseUp(html.MouseEvent event) {
+  void _handleMouseUp(UIEvent event) {
     _handlePointerUp(-1, event, false);
   }
 
-  void _handlePointerUp(int id, html.MouseEvent event, bool clear, [Stage
-      owner]) {
+  void _handlePointerUp(int id, UIEvent event, bool clear, [Stage owner]) {
     if (_prevStage != null && owner == null) return; // redundant listener.
 
     Map<String, Object> data = _getPointerData(id);
@@ -541,12 +539,12 @@ class Stage extends Container {
     }
   }
 
-  void _handleMouseDown(html.MouseEvent event) {
+  void _handleMouseDown(UIEvent event) {
     _handlePointerDown(-1, event, event.page.x, event.page.y);
   }
 
-  void _handlePointerDown(int id, html.MouseEvent event, int pageX, int
-      pageY, [Stage owner]) {
+  void _handlePointerDown(int id, UIEvent event, int pageX, int pageY, [Stage
+      owner]) {
     if (pageY != null) _updatePointerPosition(id, event, pageX, pageY);
     DisplayObject target;
     Map<String, Object> data = _getPointerData(id);
@@ -588,7 +586,7 @@ class Stage extends Container {
     }
 
     Map<String, Object> data = _getPointerData(-1);
-    html.MouseEvent event = data['posEvtObj'];
+    UIEvent event = data['posEvtObj'];
 
     // TODO: (event.target == canvas) ???
     bool isEventTarget = eventTarget != null || event != null && (event.target
@@ -628,7 +626,7 @@ class Stage extends Container {
 
     // find common ancestor:
     for (int i = 0; i < list.length; i++) {
-      if (list[i] != oldList[i]) break;
+      if (oldList.isEmpty || list[i] != oldList[i]) break;
       common = i;
     }
 
@@ -655,7 +653,7 @@ class Stage extends Container {
     }
   }
 
-  void _handleDoubleClick(html.MouseEvent event, [Stage owner]) {
+  void _handleDoubleClick(UIEvent event, [Stage owner]) {
     DisplayObject target;
     Map<String, Object> data = _getPointerData(-1);
 
@@ -673,7 +671,7 @@ class Stage extends Container {
   }
 
   void _dispatchMouseEvent(DisplayObject target, String type, bool bubbles, int
-      pointerId, Map<String, Object> data, html.MouseEvent nativeEvent) {
+      pointerId, Map<String, Object> data, UIEvent nativeEvent) {
     // TODO: might be worth either reusing MouseEvent instances, or adding a
     // willTrigger method to avoid GC.
     if (target == null || (!bubbles && !target.hasEventListener(type))) return;

@@ -51,7 +51,7 @@ class MouseEvent extends create_dart.Event {
    * this event may differ between browsers. This property will be null if the
    * EaselJS property was not directly generated from a native MouseEvent.
    */
-  html.MouseEvent nativeEvent;
+  UIEvent nativeEvent;
 
   /**
    * The unique id for the pointer (touch point or cursor). This will be either

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+  	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="assets/css/demoStyles.css" rel="stylesheet" type="text/css"/>
+    <style>
+      BODY {
+        -webkit-user-select: none; /* Chrome all / Safari all */
+        -moz-user-select: none; /* Firefox all */
+        -ms-user-select: none; /* IE 10+ */
+        /* No support for these yet, use at own risk */
+        -o-user-select: none;
+        user-select: none;
+      }
+    </style>
+    <title>EaselDart: AlphaMaskFilter Reveal Demo</title>
+  </head>
+
+  <body>
+    <div id="loader"></div>
+    <header id="header" class="EaselJS">
+      <h1><span class="text-product">Easel<strong>Dart</strong></span> AlphaMaskFilter reveal</h1>
+      <p>This example demonstrates revealing an image using another image as the mask. The mask is created by drawing a
+              shape, and then caching the shape to make an image with an alpha channel. It is then applied to the image as
+              an mask using the <strong>AlphaMaskFilter</strong> filter. Another copy of the image is added below with a
+              <strong>BlurFilter</strong> to make the effect cooler.</p>
+    </header>
+
+    <canvas id="testCanvas" width="960" height="400"></canvas>
+
+    <script type="application/dart" src="alpha_mask_reveal.dart"></script>
+    <script src="packages/browser/dart.js"></script>
+  </body>
+</html>

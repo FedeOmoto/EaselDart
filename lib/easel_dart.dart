@@ -108,8 +108,8 @@
  */
 library easel_dart;
 
-import 'dart:html' hide MouseEvent;
-import 'dart:html' as html show MouseEvent;
+import 'dart:html' hide Touch;
+import 'dart:html' as html show Touch;
 import 'dart:math';
 
 @MirrorsUsed(targets: const [CanvasRenderingContext2D])
@@ -136,9 +136,11 @@ part 'src/filters/blur_filter.dart';
 part 'src/filters/color_filter.dart';
 part 'src/filters/color_matrix.dart';
 part 'src/filters/color_matrix_filter.dart';
+part 'src/filters/alpha_mask_filter.dart';
 part 'src/geom/matrix_2d.dart';
 part 'src/utils/uid.dart';
 part 'src/utils/ticker.dart';
 part 'src/events/mouse_event.dart';
 part 'src/events/tick_event.dart';
 part 'src/events/animation_end_event.dart';
+part 'src/ui/touch.dart';
