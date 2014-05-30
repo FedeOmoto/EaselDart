@@ -123,8 +123,8 @@ class Sprite extends DisplayObject {
     if (object == null) return false;
     Rectangle<double> rect = object['rect'];
     ctx.drawImageScaledFromSource(object['image'], rect.left, rect.top,
-        rect.width, rect.height, -(object['regX'] as double), -(object['regY'] as
-        double), rect.width, rect.height);
+        rect.width, rect.height, -(object['regX'] as num).toDouble(), -(object['regY']
+        as num).toDouble(), rect.width, rect.height);
 
     return true;
   }
@@ -207,9 +207,12 @@ class Sprite extends DisplayObject {
    */
   @override
   Sprite clone([bool recursive = false]) {
-    Sprite sprite = new Sprite(_spriteSheet, null);
-    _cloneProps(sprite);
-    return sprite;
+    ClassMirror cm = reflectClass(runtimeType);
+    InstanceMirror im = cm.newInstance(const Symbol(''), [_spriteSheet, null]);
+    DisplayObject object = im.reflectee;
+    _cloneProps(object);
+
+    return object;
   }
 
   // Advances the `currentFrame` if paused is not true. This is called

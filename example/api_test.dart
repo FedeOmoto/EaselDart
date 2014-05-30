@@ -358,8 +358,8 @@ ImageElement image = new ImageElement(src: 'assets/images/runningGrant.png');
 
 easel.SpriteSheetData ssd = new easel.SpriteSheetData();
 ssd.animations = &lt;String, Object&gt; {
-  'run': &lt;int&gt;[0, 25],
-  'jump': &lt;int>[26, 63]
+  'run': [0, 25],
+  'jump': [26, 63]
 };
 ssd.images = &lt;CanvasImageSource&gt;[image];
 ssd.frames = &lt;String, num&gt; {
@@ -391,8 +391,8 @@ stage.addChild(sprite);''';
 
     easel.SpriteSheetData ssd = new easel.SpriteSheetData();
     ssd.animations = <String, Object> {
-      'run': <int>[0, 25],
-      'jump': <int>[26, 63]
+      'run': [0, 25],
+      'jump': [26, 63]
     };
     ssd.images = <CanvasImageSource>[image];
     ssd.frames = <String, num> {

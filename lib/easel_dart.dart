@@ -140,6 +140,7 @@ part 'src/filters/alpha_mask_filter.dart';
 part 'src/geom/matrix_2d.dart';
 part 'src/utils/uid.dart';
 part 'src/utils/ticker.dart';
+part 'src/utils/sprite_sheet_utils.dart';
 part 'src/events/mouse_event.dart';
 part 'src/events/tick_event.dart';
 part 'src/events/animation_end_event.dart';

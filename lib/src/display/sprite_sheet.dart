@@ -129,6 +129,7 @@ part of easel_dart;
  */
 class SpriteSheet extends create_dart.EventDispatcher {
   bool _complete = true;
+  List<String> _animations;
   List<Map<String, Object>> _frames;
   Map<String, Map<String, Object>> _data;
   int _loadCount = 0;
@@ -151,11 +152,13 @@ class SpriteSheet extends create_dart.EventDispatcher {
 
     // parse frames:
     if (_ssd.frames != null) {
-      _numFrames = _ssd.frames['count'];
+      if (_ssd.frames['count'] != null) _numFrames = _ssd.frames['count'];
       if (_loadCount == 0) _calculateFrames();
     }
 
     // parse animations:
+    _animations = new List<String>();
+
     if (_ssd.animations != null) {
       List<int> frames;
       _data = new Map<String, Map<String, Object>>();
@@ -163,34 +166,33 @@ class SpriteSheet extends create_dart.EventDispatcher {
       _ssd.animations.forEach((String name, Object value) {
         Map<String, Object> anim = new Map<String, Object>();
         anim['name'] = name;
-        Object obj = _ssd.animations[name];
 
-        if (obj is int) { // single frame
-          frames = anim['frames'] = <int>[obj];
-        } else if (obj is List) { // simple
-          if (obj.length == 1) {
-            anim['frames'] = <int>[obj[0]];
+        if (value is int) { // single frame
+          frames = anim['frames'] = <int>[value];
+        } else if (value is List) { // simple
+          if (value.length == 1) {
+            anim['frames'] = <int>[value[0]];
           } else {
             num speed;
             Object next;
 
             try {
-              next = obj[2];
-              speed = obj[3];
+              next = value[2];
+              speed = value[3];
             } on RangeError {}
 
             if (speed != null) anim['speed'] = speed;
             if (next != null) anim['next'] = next;
             frames = anim['frames'] = new List<int>();
 
-            for (int i = obj[0]; i <= obj[1]; i++) {
+            for (int i = value[0]; i <= value[1]; i++) {
               frames.add(i);
             }
           }
         } else { // complex
-          anim['speed'] = (obj as Map<String, Object>)['speed'];
-          anim['next'] = (obj as Map<String, Object>)['next'];
-          Object tmpFrames = (obj as Map<String, Object>)['frames'];
+          anim['speed'] = (value as Map<String, Object>)['speed'];
+          anim['next'] = (value as Map<String, Object>)['next'];
+          Object tmpFrames = (value as Map<String, Object>)['frames'];
           frames = anim['frames'] = (tmpFrames is int) ? <int>[tmpFrames] :
               new List<int>.from(tmpFrames);
         }
@@ -205,7 +207,7 @@ class SpriteSheet extends create_dart.EventDispatcher {
         }
 
         if (anim['speed'] == null) anim['speed'] = 1;
-
+        _animations.add(name);
         _data[name] = anim;
       });
     }
@@ -233,7 +235,7 @@ class SpriteSheet extends create_dart.EventDispatcher {
   }
 
   /// Returns an array of all available animation names as strings.
-  List<String> get getAnimations => new List<String>.from(_ssd.animations.keys);
+  List<String> get getAnimations => _animations.toList();
 
   /**
    * Returns an object defining the specified animation. The returned object
@@ -290,6 +292,7 @@ class SpriteSheet extends create_dart.EventDispatcher {
     // because they can be reused.
     var ss = new SpriteSheet(null);
     ss._complete = _complete;
+    ss._animations = _animations;
     ss._frames = _frames;
     ss._data = _data;
     ss._numFrames = _numFrames;

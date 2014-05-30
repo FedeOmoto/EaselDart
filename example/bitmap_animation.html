@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+  	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="assets/css/demoStyles.css" rel="stylesheet" type="text/css"/>
+    <title>EaselDart Example: Animation sequences & sprite sheets</title>
+  </head>
+ 
+  <body>
+    <header id="header" class="EaselJS">
+      <h1><span class="text-product">Easel<strong>Dart</strong></span> Sprite</h1>
+      <p>Dev sample showing how to use <strong>SpriteSheet</strong>, <strong>Sprite</strong>,
+              and <strong>SpriteSheetUtils.addFlippedFrames()</strong>.</p>
+      <p>Some browsers can not load images or access pixel data when running local files, and may throw a security error
+              or not
+              work unless the content is running on a server.</p>
+    </header>
+
+    <div class="canvasHolder">
+      <canvas id="testCanvas" width="960" height="400"></canvas>
+    </div>
+
+    <script type="application/dart" src="bitmap_animation.dart"></script>
+    <script src="packages/browser/dart.js"></script>
+  </body>
+</html>
