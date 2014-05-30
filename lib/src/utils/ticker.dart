@@ -294,7 +294,7 @@ class Ticker extends create_dart.EventDispatcher {
     return _ticks - (pauseable ? _pausedTicks : 0);
   }
 
-  void _handleSynch() {
+  void _handleSynch(num highResTime) {
     double time = _getTime() - _startTime;
     _timerId = null;
     _setupTick();
@@ -305,7 +305,7 @@ class Ticker extends create_dart.EventDispatcher {
     }
   }
 
-  void _handleRAF() {
+  void _handleRAF(num highResTime) {
     _timerId = null;
     _setupTick();
     _tick();
